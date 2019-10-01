@@ -1,0 +1,24 @@
+version: 2
+
+jobs:
+  build_and_push_tag:
+    machine: true
+    steps:
+      - checkout
+      - run:
+          shell: /bin/bash
+          command: |
+            docker build -t ictu/remotefs:${CIRCLE_TAG} .
+            docker login -u $DOCKER_USER -p $DOCKER_PASS
+            docker push ictu/remotefs:${CIRCLE_TAG}
+
+workflows:
+  version: 2
+  build_and_push:
+    jobs:
+      - build_and_push_tag:
+          filters:
+            tags:
+              only: /^[0-9]+\.[0-9]+(\.[0-9])*(-[0-9]+)*$/
+            branches:
+              ignore: /.*/
