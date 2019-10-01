@@ -1,9 +1,9 @@
 # Architecture
 
 ## Purpose
-The RemoteFS service allows bucket commands (create, copy, delete) to be executed local to the data. Secondly it reports the size of the storage disk and the size of each bucket.
+The RemoteFS service allows bucket commands (create, copy, delete) to be executed local to the data. Secondly it reports the size of the storage disk.
 
-Design rationale: In the BigBoat Architecture the same NFS directory is mounted on each node. Thus, it would be possible to execute the same file commands on all nodes. 
+Design rationale: In the BigBoat Architecture the same NFS directory is mounted on each node. Thus, it would be possible to execute the same file commands on all nodes.
 However, in practice, copying and deleting folders on NFS can take a considerable amount of time if the folder contains a lot of data or small files.
 RemoteFS runs on the NFS machine, thus all file operations run local to the data. This way copying and deletion actions are much faster.
 
@@ -17,7 +17,8 @@ RemoteFS subscribes to a couple of topics on which it receives the create, copy 
 - Copy the data of an existing bucket to a new bucket
 - Delete a bucket
 - Report disk space
-- Report bucket sizes
+
+The bucket size feature has been removed because it generated too much load and was far too slow.
 
 ## MQTT
 
@@ -54,7 +55,7 @@ RemoteFS subscribes to a couple of topics on which it receives the create, copy 
 ### Publications
 
 - /errors/remotefs
-    
+
     An internal error has occured while performing an operation. Example:
     ```
     {
@@ -64,7 +65,7 @@ RemoteFS subscribes to a couple of topics on which it receives the create, copy 
     ```
 
 - /errors/storage
-    
+
     An internal error has occured while performing an operation. Example:
     ```
     {
@@ -100,16 +101,6 @@ RemoteFS subscribes to a couple of topics on which it receives the create, copy 
         },
         ...
     ]
-    ```
-
-- /agent/storage/bucket/size
-    
-    Reports the sizes of a storage bucket. Example:
-    ```
-    {
-        name: "bucket1",
-        size: 98345
-    }
     ```
 
 - /agent/storage/size

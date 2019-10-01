@@ -37,15 +37,9 @@ const watchBuckets = (baseDir, listBucketsInterval, mqtt, events) => {
   setInterval(buckets.list(baseDir, events), listBucketsInterval);
 };
 
-const watchBucketSizes = (baseDir, getBucketSizesInterval, mqtt, events) => {
-  events.on("/size", data => mqtt.publish("/agent/storage/bucket/size", data));
-  buckets.listSizes(baseDir, events, getBucketSizesInterval);
-};
-
 module.exports = () => {
   const baseDir = process.env.BASE_DIR;
   const listBucketsInterval = process.env.LIST_BUCKETS_INTERVAL || 5000;
-  const getBucketSizesInterval = process.env.GET_BUCKET_SIZES_INTERVAL || 30000;
   const getDatastoreSizeInterval =
     process.env.GET_DATASTORE_SIZE_INTERVAL || 5000;
 
@@ -58,7 +52,6 @@ module.exports = () => {
   addCommandSubscriptions(mqttClient, rfs);
 
   watchBuckets(baseDir, listBucketsInterval, mqttClient, events);
-  watchBucketSizes(baseDir, getBucketSizesInterval, mqttClient, events);
 
   setInterval(
     datastore.publishDataStoreUsage(mqttClient, "/agent/storage/size", baseDir),
